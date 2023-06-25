@@ -15,6 +15,7 @@
 		".vscode-test"
 	],
 	"references": [
-		{ "path": "./vscode_lsp_client" }
+		{ "path": "./client" },
+		{ "path": "./server" }
 	]
 }

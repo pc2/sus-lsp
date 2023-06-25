@@ -5,39 +5,53 @@
 
 import * as path from 'path';
 import { workspace, ExtensionContext } from 'vscode';
-import * as child_process from 'child_process';
 
 import {
 	LanguageClient,
 	LanguageClientOptions,
-	Executable,
 	ServerOptions,
-	TransportKind
+	TransportKind,
+	Executable
 } from 'vscode-languageclient/node';
-import { ChildProcess } from 'child_process';
 
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
-	console.log("Extention Launched!\n");
-	
+
+	// The server is implemented in node
+	const serverExecutable: Executable = {
+		command: "/home/lennart/Desktop/sus-compiler/target/release/sus_compiler",
+		args: ["--lsp"],
+		transport : TransportKind.stdio
+		/*transport: {
+			kind: TransportKind.socket,
+			port: 25000
+		}*/
+	};
+	/*const serverModule = context.asAbsolutePath(
+		path.join('server', 'out', 'server.js')
+	);*/
+
 	// If the extension is launched in debug mode then the debug server options are used
 	// Otherwise the run options are used
-	const serverOptions : Executable = {
-		command: "/home/lennart/Desktop/DoctoraatPaderborn/sus_lsp/language_server/target/debug/sus_language_server",
-		transport: TransportKind.stdio,
-		//args?: string[];
-		//options?: ExecutableOptions;
+	const serverOptions: ServerOptions = {
+		run: serverExecutable,
+		debug : serverExecutable
+		//run: { module: serverModule, transport: TransportKind.ipc },
+		//debug: {
+		//	module: serverModule,
+		//	transport: TransportKind.ipc,
+		//}
 	};
-	
+
 	// Options to control the language client
 	const clientOptions: LanguageClientOptions = {
 		// Register the server for plain text documents
-		documentSelector: [{ scheme: 'file', language: 'plaintext' }],
+		documentSelector: [{ scheme: "file", language: 'sus' }],
 		synchronize: {
 			// Notify the server about file changes to '.clientrc files contained in the workspace
-			fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
-		}
+			fileEvents: workspace.createFileSystemWatcher('**/*.sus')
+		},
 	};
 
 	// Create the language client and start the client.
@@ -49,7 +63,6 @@ export function activate(context: ExtensionContext) {
 	);
 
 	// Start the client. This will also launch the server
-	console.log("Server Launched!");
 	client.start();
 }
 
