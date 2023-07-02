@@ -1,18 +1,19 @@
 {
-	"name": "lsp-sample",
-	"description": "A language server example",
-	"author": "Microsoft Corporation",
+	"name": "sus-lsp-client",
+	"description": "An LSP Client for the SUS Hardware Design Language",
+	"author": "Lennart Van Hirtum",
 	"license": "MIT",
 	"version": "1.0.0",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Microsoft/vscode-extension-samples"
+		"url": "https://github.com/pc2/sus-lsp"
 	},
-	"publisher": "vscode-samples",
-	"categories": [],
-	"keywords": [
-		"multi-root ready"
+	"publisher": "lennart-van-hirtum",
+	"categories": [
+		"Linters",
+		"Programming Languages"
 	],
+	"keywords": [],
 	"engines": {
 		"vscode": "^1.75.0"
 	},
@@ -44,11 +45,17 @@
 				}
 			}
 		},
-		"languages": [{
-			"id": "sus",
-			"aliases": ["SUS Language"],
-			"extensions": [".sus"]
-		}]
+		"languages": [
+			{
+				"id": "sus",
+				"aliases": [
+					"SUS Language"
+				],
+				"extensions": [
+					".sus"
+				]
+			}
+		]
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
@@ -61,10 +68,13 @@
 	"devDependencies": {
 		"@types/mocha": "^9.1.0",
 		"@types/node": "^16.18.34",
+		"@types/vscode": "^1.75.0",
 		"@typescript-eslint/eslint-plugin": "^5.54.0",
 		"@typescript-eslint/parser": "^5.54.0",
 		"eslint": "^8.35.0",
 		"mocha": "^9.2.1",
-		"typescript": "^5.1.3"
+		"ts-loader": "^9.4.3",
+		"typescript": "^5.1.3",
+		"webpack-cli": "^5.1.4"
 	}
 }
