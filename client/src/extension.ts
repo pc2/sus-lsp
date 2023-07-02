@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 
 import * as path from 'path';
-import { workspace, ExtensionContext } from 'vscode';
+import { workspace, ExtensionContext, commands } from 'vscode';
 
 import {
 	LanguageClient,
@@ -16,11 +16,13 @@ import {
 
 let client: LanguageClient;
 
-export function activate(context: ExtensionContext) {
-
+function start_lsp() {
 	// The server is implemented in node
+	const config = workspace.getConfiguration("sus_lsp");
+	const command_path = config.get("executable_path");
+	console.log("Command path is: ", command_path);
 	const serverExecutable: Executable = {
-		command: "/home/lennart/Desktop/sus-compiler/target/release/sus_compiler",
+		command: String(command_path),
 		args: ["--lsp"],
 		transport : TransportKind.stdio
 		/*transport: {
@@ -64,6 +66,24 @@ export function activate(context: ExtensionContext) {
 
 	// Start the client. This will also launch the server
 	client.start();
+}
+
+function stop_lsp() {
+	if (!client) {
+		return undefined;
+	}
+	return client.stop();
+}
+
+function restart_lsp() {
+	stop_lsp();
+	start_lsp();
+}
+
+export function activate(context: ExtensionContext) {
+	context.subscriptions.push(commands.registerCommand("sus.restartServer", restart_lsp));
+
+	start_lsp();
 }
 
 export function deactivate(): Thenable<void> | undefined {

@@ -26,13 +26,13 @@
 			"type": "object",
 			"title": "Example configuration",
 			"properties": {
-				"languageServerExample.maxNumberOfProblems": {
+				"sus_lsp.maxNumberOfProblems": {
 					"scope": "resource",
 					"type": "number",
 					"default": 100,
 					"description": "Controls the maximum number of problems produced by the server."
 				},
-				"languageServerExample.trace.server": {
+				"sus_lsp.trace.server": {
 					"scope": "window",
 					"type": "string",
 					"enum": [
@@ -42,6 +42,12 @@
 					],
 					"default": "off",
 					"description": "Traces the communication between VS Code and the language server."
+				},
+				"sus_lsp.executable_path": {
+					"scope": "window",
+					"type": "string",
+					"default": "/home/lennart/Desktop/sus-compiler/targer/release/sus_compiler",
+					"description": "The location of the SUS Language Server Executable"
 				}
 			}
 		},
@@ -54,6 +60,13 @@
 				"extensions": [
 					".sus"
 				]
+			}
+		],
+		"commands": [
+			{
+				"command": "sus.restartServer",
+				"title": "Restart the SUS Language Server",
+				"category": "Restart SUS LSP"
 			}
 		]
 	},
@@ -76,5 +89,8 @@
 		"ts-loader": "^9.4.3",
 		"typescript": "^5.1.3",
 		"webpack-cli": "^5.1.4"
+	},
+	"dependencies": {
+		"webpack": "^5.88.1"
 	}
 }

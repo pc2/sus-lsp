@@ -8,10 +8,13 @@ exports.deactivate = exports.activate = void 0;
 const vscode_1 = require("vscode");
 const node_1 = require("vscode-languageclient/node");
 let client;
-function activate(context) {
+function start_lsp() {
     // The server is implemented in node
+    const config = vscode_1.workspace.getConfiguration("sus_lsp");
+    const command_path = config.get("executable_path");
+    console.log("Command path is: ", command_path);
     const serverExecutable = {
-        command: "/home/lennart/Desktop/sus-compiler/target/release/sus_compiler",
+        command: String(command_path),
         args: ["--lsp"],
         transport: node_1.TransportKind.stdio
         /*transport: {
@@ -46,6 +49,20 @@ function activate(context) {
     client = new node_1.LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions);
     // Start the client. This will also launch the server
     client.start();
+}
+function stop_lsp() {
+    if (!client) {
+        return undefined;
+    }
+    return client.stop();
+}
+function restart_lsp() {
+    stop_lsp();
+    start_lsp();
+}
+function activate(context) {
+    context.subscriptions.push(vscode_1.commands.registerCommand("sus.restartServer", restart_lsp));
+    start_lsp();
 }
 exports.activate = activate;
 function deactivate() {
