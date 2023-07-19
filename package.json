@@ -46,7 +46,7 @@
 				"sus_lsp.executable_path": {
 					"scope": "window",
 					"type": "string",
-					"default": "/home/lennart/Desktop/sus-compiler/targer/release/sus_compiler",
+					"default": "sus_compiler",
 					"description": "The location of the SUS Language Server Executable"
 				}
 			}
