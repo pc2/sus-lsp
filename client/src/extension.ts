@@ -3,7 +3,6 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import * as path from 'path';
 import { workspace, ExtensionContext, commands } from 'vscode';
 
 import {
@@ -19,21 +18,26 @@ let client: LanguageClient;
 function start_lsp() {
 	// The server is implemented in node
 	const config = workspace.getConfiguration("sus_lsp");
-	const command_path = config.get("executable_path");
+	const command_path : string = config.get("executable_path");
+	const use_tcp : boolean = config.get("use_tcp");
+	const tcp_port : number = config.get("tcp_port");
+
+	let transport;
+	if(use_tcp) {
+		transport = {
+			kind: TransportKind.socket,
+			port: tcp_port
+		};
+	} else {
+		transport = TransportKind.stdio;
+	}
 	console.log("Command path is: ", command_path);
 	const serverExecutable: Executable = {
 		command: String(command_path),
 		args: ["--lsp"],
-		transport : TransportKind.stdio
-		/*transport: {
-			kind: TransportKind.socket,
-			port: 25000
-		}*/
+		transport : transport
 	};
-	/*const serverModule = context.asAbsolutePath(
-		path.join('server', 'out', 'server.js')
-	);*/
-
+	
 	// If the extension is launched in debug mode then the debug server options are used
 	// Otherwise the run options are used
 	const serverOptions: ServerOptions = {
@@ -51,7 +55,7 @@ function start_lsp() {
 		// Register the server for plain text documents
 		documentSelector: [{ scheme: "file", language: 'sus' }],
 		synchronize: {
-			// Notify the server about file changes to '.clientrc files contained in the workspace
+			// Notify the server about file changes to '.sus files contained in the workspace
 			fileEvents: workspace.createFileSystemWatcher('**/*.sus')
 		},
 	};

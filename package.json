@@ -26,12 +26,6 @@
 			"type": "object",
 			"title": "Example configuration",
 			"properties": {
-				"sus_lsp.maxNumberOfProblems": {
-					"scope": "resource",
-					"type": "number",
-					"default": 100,
-					"description": "Controls the maximum number of problems produced by the server."
-				},
 				"sus_lsp.trace.server": {
 					"scope": "window",
 					"type": "string",
@@ -48,6 +42,18 @@
 					"type": "string",
 					"default": "sus_compiler",
 					"description": "The location of the SUS Language Server Executable"
+				},
+				"sus_lsp.use_tcp": {
+					"scope": "window",
+					"type": "boolean",
+					"default": false,
+					"description": "Run the SUS LSP over TCP"
+				},
+				"sus_lsp.tcp_port": {
+					"scope": "window",
+					"type": "number",
+					"default": 25000,
+					"description": "TCP Port to run the SUS LSP over"
 				}
 			}
 		},

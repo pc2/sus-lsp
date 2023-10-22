@@ -12,19 +12,24 @@ function start_lsp() {
     // The server is implemented in node
     const config = vscode_1.workspace.getConfiguration("sus_lsp");
     const command_path = config.get("executable_path");
+    const use_tcp = config.get("use_tcp");
+    const tcp_port = config.get("tcp_port");
+    let transport;
+    if (use_tcp) {
+        transport = {
+            kind: node_1.TransportKind.socket,
+            port: tcp_port
+        };
+    }
+    else {
+        transport = node_1.TransportKind.stdio;
+    }
     console.log("Command path is: ", command_path);
     const serverExecutable = {
         command: String(command_path),
         args: ["--lsp"],
-        transport: node_1.TransportKind.stdio
-        /*transport: {
-            kind: TransportKind.socket,
-            port: 25000
-        }*/
+        transport: transport
     };
-    /*const serverModule = context.asAbsolutePath(
-        path.join('server', 'out', 'server.js')
-    );*/
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
     const serverOptions = {
@@ -41,7 +46,7 @@ function start_lsp() {
         // Register the server for plain text documents
         documentSelector: [{ scheme: "file", language: 'sus' }],
         synchronize: {
-            // Notify the server about file changes to '.clientrc files contained in the workspace
+            // Notify the server about file changes to '.sus files contained in the workspace
             fileEvents: vscode_1.workspace.createFileSystemWatcher('**/*.sus')
         },
     };
