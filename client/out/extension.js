@@ -12,23 +12,15 @@ function start_lsp() {
     // The server is implemented in node
     const config = vscode_1.workspace.getConfiguration("sus_lsp");
     const command_path = config.get("executable_path");
-    const use_tcp = config.get("use_tcp");
     const tcp_port = config.get("tcp_port");
-    let transport;
-    if (use_tcp) {
-        transport = {
-            kind: node_1.TransportKind.socket,
-            port: tcp_port
-        };
-    }
-    else {
-        transport = node_1.TransportKind.stdio;
-    }
     console.log("Command path is: ", command_path);
     const serverExecutable = {
         command: String(command_path),
         args: ["--lsp"],
-        transport: transport
+        transport: {
+            kind: node_1.TransportKind.socket,
+            port: tcp_port
+        }
     };
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
@@ -51,7 +43,7 @@ function start_lsp() {
         },
     };
     // Create the language client and start the client.
-    client = new node_1.LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions);
+    client = new node_1.LanguageClient('susLanguageServer', 'SUS Language Server', serverOptions, clientOptions);
     // Start the client. This will also launch the server
     client.start();
 }

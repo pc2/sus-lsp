@@ -43,12 +43,6 @@
 					"default": "sus_compiler",
 					"description": "The location of the SUS Language Server Executable"
 				},
-				"sus_lsp.use_tcp": {
-					"scope": "window",
-					"type": "boolean",
-					"default": false,
-					"description": "Run the SUS LSP over TCP"
-				},
 				"sus_lsp.tcp_port": {
 					"scope": "window",
 					"type": "number",

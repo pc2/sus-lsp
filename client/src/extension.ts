@@ -19,23 +19,16 @@ function start_lsp() {
 	// The server is implemented in node
 	const config = workspace.getConfiguration("sus_lsp");
 	const command_path : string = config.get("executable_path");
-	const use_tcp : boolean = config.get("use_tcp");
 	const tcp_port : number = config.get("tcp_port");
 
-	let transport;
-	if(use_tcp) {
-		transport = {
-			kind: TransportKind.socket,
-			port: tcp_port
-		};
-	} else {
-		transport = TransportKind.stdio;
-	}
 	console.log("Command path is: ", command_path);
 	const serverExecutable: Executable = {
 		command: String(command_path),
 		args: ["--lsp"],
-		transport : transport
+		transport : {
+			kind: TransportKind.socket,
+			port: tcp_port
+		}
 	};
 	
 	// If the extension is launched in debug mode then the debug server options are used
@@ -62,8 +55,8 @@ function start_lsp() {
 
 	// Create the language client and start the client.
 	client = new LanguageClient(
-		'languageServerExample',
-		'Language Server Example',
+		'susLanguageServer',
+		'SUS Language Server',
 		serverOptions,
 		clientOptions
 	);
