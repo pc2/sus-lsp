@@ -3,7 +3,7 @@
 	"description": "An LSP Client for the SUS Hardware Design Language",
 	"author": "Lennart Van Hirtum",
 	"license": "MIT",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pc2/sus-lsp"
@@ -42,6 +42,12 @@
 					"type": "string",
 					"default": "sus_compiler",
 					"description": "The location of the SUS Language Server Executable"
+				},
+				"sus_lsp.args": {
+					"scope": "window",
+					"type": "array",
+					"default": ["--lsp"],
+					"description": "Extra flags to pass after 'sus-compiler'"
 				},
 				"sus_lsp.tcp_port": {
 					"scope": "window",

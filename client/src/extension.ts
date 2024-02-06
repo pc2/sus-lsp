@@ -19,12 +19,13 @@ function start_lsp() {
 	// The server is implemented in node
 	const config = workspace.getConfiguration("sus_lsp");
 	const command_path : string = config.get("executable_path");
+	const args : string[] = config.get("args");
 	const tcp_port : number = config.get("tcp_port");
 
 	console.log("Command path is: ", command_path);
 	const serverExecutable: Executable = {
 		command: String(command_path),
-		args: ["--lsp"],
+		args,
 		transport : {
 			kind: TransportKind.socket,
 			port: tcp_port

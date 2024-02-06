@@ -12,11 +12,12 @@ function start_lsp() {
     // The server is implemented in node
     const config = vscode_1.workspace.getConfiguration("sus_lsp");
     const command_path = config.get("executable_path");
+    const args = config.get("args");
     const tcp_port = config.get("tcp_port");
     console.log("Command path is: ", command_path);
     const serverExecutable = {
         command: String(command_path),
-        args: ["--lsp"],
+        args,
         transport: {
             kind: node_1.TransportKind.socket,
             port: tcp_port
