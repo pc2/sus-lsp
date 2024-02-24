@@ -1,0 +1,68 @@
+{
+	"scopeName": "source.sus",
+	"foldingStartMarker" : "\\{",
+	"foldingStopMarker" : "\\}",
+	"patterns": [
+		{
+			"match": "\\b(if|else|while|for|in|out)\\b",
+			"name": "keyword.control.untitled"
+		},
+		{
+			"match": "\\b(template|module|interface|timeline|struct|enum)\\b",
+			"name": "storage.type"
+		},
+		{
+			"match": "\\b(reg|state|gen|initial|assume)\\b",
+			"name": "storage.modifier"
+		},
+		{
+			"match": "\\b\\d[\\d_]*(?:\\.*[\\d_]*)\\b",
+			"name": "constant.numeric"
+		},
+		{
+			"begin": "\\(",
+			"end": "\\)",
+			"beginCaptures": {
+				"0": { "name": "punctuation.paren.open" }
+			},
+			"endCaptures": {
+				"0": { "name": "punctuation.paren.close" }
+			},
+			"name": "expression.group",
+			"patterns": [{ "include": "$self" }]
+		},
+		{
+			"begin": "\\[",
+			"end": "\\]",
+			"beginCaptures": {
+				"0": { "name": "punctuation.bracket.open" }
+			},
+			"endCaptures": {
+				"0": { "name": "punctuation.bracket.close" }
+			},
+			"name": "expression.group",
+			"patterns": [{ "include": "$self" }]
+		},
+		{
+			"begin": "\\{",
+			"end": "\\}",
+			"beginCaptures": {
+				"0": { "name": "punctuation.brace.open" }
+			},
+			"endCaptures": {
+				"0": { "name": "punctuation.brace.close" }
+			},
+			"name": "expression.group",
+			"patterns": [{ "include": "$self" }]
+		},
+		{
+			"match": "//[^\\n]*\\n",
+			"name": "comment.line.double-slash"
+		},
+		{
+			"begin" : "\\/\\*",
+			"end" : "\\*\\/",
+			"name": "comment.block"
+		}
+	]
+}
