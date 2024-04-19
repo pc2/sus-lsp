@@ -4,15 +4,15 @@
 	"foldingStopMarker" : "\\}",
 	"patterns": [
 		{
-			"match": "\\b(if|else|while|for|in|out)\\b",
+			"match": "\\b(gen|if|when|else|while|for|in|out)\\b",
 			"name": "keyword.control.untitled"
 		},
 		{
-			"match": "\\b(template|module|interface|timeline|struct|enum)\\b",
-			"name": "storage.type"
+			"match": "\\b(template|module|interface|cross|timeline|struct|enum)\\b",
+			"name": "keyword.control.untitled"
 		},
 		{
-			"match": "\\b(reg|state|gen|initial|assume)\\b",
+			"match": "\\b(reg|state|initial|assume)\\b",
 			"name": "storage.modifier"
 		},
 		{
