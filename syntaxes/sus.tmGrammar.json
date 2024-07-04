@@ -12,7 +12,7 @@
 			"name": "keyword.control.untitled"
 		},
 		{
-			"match": "\\b(module|interface|struct)\\b",
+			"match": "\\b(struct|module|interface|action|query|trigger|domain)\\b",
 			"name": "keyword.control.untitled"
 		},
 		{
