@@ -73,13 +73,14 @@ function stop_lsp() {
 	return client.stop();
 }
 
-function restart_lsp() {
-	stop_lsp();
-	start_lsp();
-}
-
 export function activate(context: ExtensionContext) {
-	context.subscriptions.push(commands.registerCommand("sus.restartServer", restart_lsp));
+	context.subscriptions.push(commands.registerCommand("sus.restartServer", () => {
+		if (client) {
+			client.restart();
+		} else {
+			start_lsp();
+		}
+	}));
 
 	start_lsp();
 }
