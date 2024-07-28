@@ -1,19 +1,21 @@
 {
-	"name": "sus-lsp-client",
+	"name": "sus-lsp",
+	"displayName": "SUS Hardware Design Language",
 	"description": "An LSP Client for the SUS Hardware Design Language",
-	"author": "Lennart Van Hirtum",
+	"author": "Lennart Van Hirtum <lennart.vanhirtum@gmail.com>",
 	"license": "MIT",
-	"version": "1.0.6",
+	"version": "0.0.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pc2/sus-lsp"
 	},
-	"publisher": "lennart-van-hirtum",
+	"homepage": "https://github.com/pc2/sus-compiler",
+	"publisher": "LennartVanHirtum",
 	"categories": [
 		"Linters",
 		"Programming Languages"
 	],
-	"keywords": [],
+	"keywords": ["lsp", "sus", "hdl", "fpga", "vlsi"],
 	"engines": {
 		"vscode": "^1.75.0"
 	},
@@ -87,9 +89,8 @@
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -b",
 		"watch": "tsc -b -w",
-		"lint": "eslint ./client/src ./server/src --ext .ts,.tsx",
-		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
-		"test": "sh ./scripts/e2e.sh"
+		"lint": "eslint ./client/src --ext .ts,.tsx",
+		"postinstall": "cd client && npm install && cd .."
 	},
 	"devDependencies": {
 		"@types/mocha": "^9.1.0",

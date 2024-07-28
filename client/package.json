@@ -1,5 +1,5 @@
 {
-	"name": "sus-lsp-client",
+	"name": "sus-lsp",
 	"displayName": "SUS Hardware Description Language Formatting Client",
 	"description": "Client for the SUS LSP. LSP Must be installed separately",
 	"author": "Lennart Van Hirtum",
@@ -17,8 +17,7 @@
 		"vscode-languageclient": "^8.1.0"
 	},
 	"devDependencies": {
-		"@types/vscode": "^1.75.1",
-		"@vscode/test-electron": "^2.2.3"
+		"@types/vscode": "^1.75.1"
 	},
 	"contributes": {
 		"languages": [{

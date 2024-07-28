@@ -4,5 +4,6 @@
 	"typescript.preferences.quoteStyle": "single",
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": "explicit"
-	}
+	},
+	"sus_lsp.executable_path": "/home/lennart/Desktop/sus-compiler/target/release/sus_compiler"
 }

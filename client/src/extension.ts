@@ -3,7 +3,8 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { workspace, ExtensionContext, commands } from 'vscode';
+import vscode = require('vscode');
+import child_process = require('child_process');
 
 import {
 	LanguageClient,
@@ -17,12 +18,31 @@ let client: LanguageClient;
 
 function start_lsp() {
 	// The server is implemented in node
-	const config = workspace.getConfiguration("sus_lsp");
-	const command_path : string = config.get("executable_path");
+	const config = vscode.workspace.getConfiguration("sus_lsp");
+	let command_path : string = config.get("executable_path");
+	if(!command_path) {
+		command_path = "sus_compiler";
+	}
 	const args : string[] = config.get("args");
 	const tcp_port : number = config.get("tcp_port");
 
 	console.log("Command path is: ", command_path);
+
+	child_process.exec(command_path + " --version", (error, stdout, stderr) => {
+        if (error) {
+            // If the executable is not found, show a notification to the user
+			if(command_path == "sus_compiler") {
+				vscode.window.showErrorMessage('sus_compiler is not installed. Please install it using "cargo install sus_compiler", or if you have it installed, but not in your PATH, then set "sus_lsp.executable_path" to the path of the executable. Eg: in .vscode/settings.json: "sus_lsp.executable_path" : "/home/lennart/Desktop/sus-compiler/target/release/sus_compiler"');
+			} else {
+				vscode.window.showErrorMessage('No sus_compiler executable found at "' + command_path + '" Please install it using "cargo install sus_compiler", or if you have it installed, but not in your PATH, then set "sus_lsp.executable_path" to the path of the executable. Eg: in .vscode/settings.json: "sus_lsp.executable_path" : "/home/lennart/Desktop/sus-compiler/target/release/sus_compiler"');
+			}
+            return;
+        }
+
+        // If the executable is found, you can log the version or do something else
+        vscode.window.showInformationMessage(`sus_compiler --version: ${stdout}`);
+    });
+
 	const serverExecutable: Executable = {
 		command: String(command_path),
 		args,
@@ -50,7 +70,7 @@ function start_lsp() {
 		documentSelector: [{ scheme: "file", language: 'sus' }],
 		synchronize: {
 			// Notify the server about file changes to '.sus files contained in the workspace
-			fileEvents: workspace.createFileSystemWatcher('**/*.sus')
+			fileEvents: vscode.workspace.createFileSystemWatcher('**/*.sus')
 		},
 	};
 
@@ -73,13 +93,13 @@ function stop_lsp() {
 	return client.stop();
 }
 
-export function activate(context: ExtensionContext) {
-	context.subscriptions.push(commands.registerCommand("sus.restartServer", () => {
+export function activate(context: vscode.ExtensionContext) {
+	context.subscriptions.push(vscode.commands.registerCommand("sus.restartServer", async () => {
 		if (client) {
-			client.restart();
-		} else {
-			start_lsp();
+			await client.stop();
+			client = undefined;
 		}
+		start_lsp();
 	}));
 
 	start_lsp();
