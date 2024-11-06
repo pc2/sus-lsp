@@ -1,3 +1,4 @@
 node_modules/
 *.vsix
 *.map
+out/extension.js
