@@ -66,28 +66,26 @@ function start_lsp() {
     // Start the client. This will also launch the server
     client.start();
 }
-function stop_lsp() {
-    if (!client) {
-        return undefined;
-    }
-    return client.stop();
-}
 function activate(context) {
     context.subscriptions.push(vscode.commands.registerCommand("sus.restartServer", async () => {
         if (client) {
-            await client.stop();
-            client = undefined;
+            client.restart();
         }
-        start_lsp();
+        else {
+            start_lsp();
+        }
     }));
     start_lsp();
 }
 exports.activate = activate;
 function deactivate() {
-    if (!client) {
-        return undefined;
+    if (client) {
+        return client.stop().then(() => {
+            client.dispose().then(() => {
+                client = undefined;
+            });
+        });
     }
-    return client.stop();
 }
 exports.deactivate = deactivate;
 //# sourceMappingURL=extension.js.map

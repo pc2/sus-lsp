@@ -86,28 +86,24 @@ function start_lsp() {
 	client.start();
 }
 
-function stop_lsp() {
-	if (!client) {
-		return undefined;
-	}
-	return client.stop();
-}
-
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand("sus.restartServer", async () => {
 		if (client) {
-			await client.stop();
-			client = undefined;
+			client.restart();
+		} else {
+			start_lsp();
 		}
-		start_lsp();
 	}));
 
 	start_lsp();
 }
 
 export function deactivate(): Thenable<void> | undefined {
-	if (!client) {
-		return undefined;
+	if (client) {
+		return client.stop().then(() => {
+			client.dispose().then(() => {
+				client = undefined;
+			});
+		});
 	}
-	return client.stop();
 }
