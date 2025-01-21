@@ -95,7 +95,13 @@ function start_lsp() {
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand("sus.restartServer", async () => {
 		if (client) {
-			client.restart();
+			// Don't use client.restart(), because we want to reload the settings
+			return client.stop().then(() => {
+				client.dispose().then(() => {
+					client = undefined;
+					start_lsp();
+				});
+			});
 		} else {
 			start_lsp();
 		}
