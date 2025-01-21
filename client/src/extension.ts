@@ -72,6 +72,12 @@ function start_lsp() {
 			// Notify the server about file changes to '.sus files contained in the workspace
 			fileEvents: vscode.workspace.createFileSystemWatcher('**/*.sus')
 		},
+		outputChannel: vscode.window.createOutputChannel("SUS Log Channel"),
+		outputChannelName: "SUSOutputChannel",
+		traceOutputChannel: vscode.window.createOutputChannel("SUS LSP Trace"),
+		connectionOptions: {
+			maxRestartCount: 0
+		}
 	};
 
 	// Create the language client and start the client.
