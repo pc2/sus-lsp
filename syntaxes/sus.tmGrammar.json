@@ -8,7 +8,7 @@
 			"name": "support.type"
 		},
 		{
-			"match": "\\b(gen|if|else|while|for|in|input|output)\\b",
+			"match": "\\b(gen|if|when|else|while|for|in|input|output)\\b",
 			"name": "keyword.control.untitled"
 		},
 		{
