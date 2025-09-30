@@ -70,6 +70,7 @@ function start_lsp() {
         outputChannel,
         traceOutputChannel,
         revealOutputChannelOn: node_1.RevealOutputChannelOn.Error,
+        //errorHandler: createDefaultErrorHandler(undefined)
         connectionOptions: {
             maxRestartCount: 0
         },
@@ -82,13 +83,19 @@ function start_lsp() {
 function activate(context) {
     context.subscriptions.push(vscode.commands.registerCommand("sus.restartServer", async () => {
         if (client) {
-            // Don't use client.restart(), because we want to reload the settings
-            return client.stop().then(() => {
-                client.dispose().then(() => {
-                    client = undefined;
-                    start_lsp();
+            if (client.state == node_1.State.Running) {
+                // Don't use client.restart(), because we want to reload the settings
+                return client.stop().then(() => {
+                    client.dispose().then(() => {
+                        client = undefined;
+                        start_lsp();
+                    });
                 });
-            });
+            }
+            else {
+                client = undefined;
+                start_lsp();
+            }
         }
         else {
             start_lsp();

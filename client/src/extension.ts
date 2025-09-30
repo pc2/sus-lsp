@@ -8,7 +8,9 @@ import {
 	ServerOptions,
 	TransportKind,
 	Executable,
-	RevealOutputChannelOn
+	RevealOutputChannelOn,
+	State,
+	CancellationStrategy
 } from 'vscode-languageclient/node';
 import { OutputChannel } from 'vscode';
 
@@ -85,6 +87,7 @@ function start_lsp() {
 		outputChannel,
 		traceOutputChannel,
 		revealOutputChannelOn: RevealOutputChannelOn.Error,
+		//errorHandler: createDefaultErrorHandler(undefined)
 		connectionOptions: {
 			maxRestartCount: 0
 		},
@@ -105,13 +108,18 @@ function start_lsp() {
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand("sus.restartServer", async () => {
 		if (client) {
-			// Don't use client.restart(), because we want to reload the settings
-			return client.stop().then(() => {
-				client.dispose().then(() => {
-					client = undefined;
-					start_lsp();
+			if(client.state == State.Running) {
+				// Don't use client.restart(), because we want to reload the settings
+				return client.stop().then(() => {
+					client.dispose().then(() => {
+						client = undefined;
+						start_lsp();
+					});
 				});
-			});
+			} else {
+				client = undefined;
+				start_lsp();
+			}
 		} else {
 			start_lsp();
 		}
