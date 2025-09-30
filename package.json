@@ -5,7 +5,7 @@
 	"icon": "susLogo512.png",
 	"author": "Lennart Van Hirtum <lennart.vanhirtum@gmail.com>",
 	"license": "MIT",
-	"version": "0.3.0-devel",
+	"version": "0.3.2-devel",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pc2/sus-lsp"
@@ -55,7 +55,6 @@
 				"sus_lsp.tcp_port": {
 					"scope": "window",
 					"type": "number",
-					"default": 25000,
 					"description": "TCP Port to run the SUS LSP over"
 				}
 			}

@@ -1,7 +1,3 @@
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
 
 import vscode = require('vscode');
 import child_process = require('child_process');
@@ -11,20 +7,25 @@ import {
 	LanguageClientOptions,
 	ServerOptions,
 	TransportKind,
-	Executable
+	Executable,
+	RevealOutputChannelOn
 } from 'vscode-languageclient/node';
+import { OutputChannel } from 'vscode';
 
 let client: LanguageClient;
+let outputChannel: OutputChannel;
+let traceOutputChannel: OutputChannel;
 
 function start_lsp() {
 	// The server is implemented in node
 	const config = vscode.workspace.getConfiguration("sus_lsp");
-	let command_path : string = config.get("executable_path");
+	let command_path : string = config.get("executable_path", undefined);
 	if(!command_path) {
 		command_path = "sus_compiler";
 	}
 	const args : string[] = config.get("args");
-	const tcp_port : number = config.get("tcp_port");
+	const tcp_port : number = config.get("tcp_port", undefined);
+	const trace_mode : string = config.get("trace.server");
 
 	console.log("Command path is: ", command_path);
 
@@ -32,9 +33,9 @@ function start_lsp() {
         if (error) {
             // If the executable is not found, show a notification to the user
 			if(command_path == "sus_compiler") {
-				vscode.window.showErrorMessage('sus_compiler is not installed. Please install it using "cargo install sus_compiler", or if you have it installed, but not in your PATH, then set "sus_lsp.executable_path" to the path of the executable. Eg: in .vscode/settings.json: "sus_lsp.executable_path" : "/home/lennart/Desktop/sus-compiler/target/release/sus_compiler"');
+				vscode.window.showErrorMessage(error + 'sus_compiler is not installed. Please install it using "cargo install sus_compiler", or if you have it installed, but not in your PATH, then set "sus_lsp.executable_path" to the path of the executable. Eg: in .vscode/settings.json: "sus_lsp.executable_path" : "/home/lennart/Desktop/sus-compiler/target/release/sus_compiler"');
 			} else {
-				vscode.window.showErrorMessage('No sus_compiler executable found at "' + command_path + '" Please install it using "cargo install sus_compiler", or if you have it installed, but not in your PATH, then set "sus_lsp.executable_path" to the path of the executable. Eg: in .vscode/settings.json: "sus_lsp.executable_path" : "/home/lennart/Desktop/sus-compiler/target/release/sus_compiler"');
+				vscode.window.showErrorMessage(error + 'No sus_compiler executable found at "' + command_path + '" Please install it using "cargo install sus_compiler", or if you have it installed, but not in your PATH, then set "sus_lsp.executable_path" to the path of the executable. Eg: in .vscode/settings.json: "sus_lsp.executable_path" : "/home/lennart/Desktop/sus-compiler/target/release/sus_compiler"');
 			}
             return;
         }
@@ -43,13 +44,20 @@ function start_lsp() {
         vscode.window.showInformationMessage(`sus_compiler --version: ${stdout}`);
     });
 
+	let transport;
+	if(tcp_port) {
+		transport = {
+			kind: TransportKind.socket,
+			port: tcp_port
+		};
+	} else {
+		transport = TransportKind.stdio;
+	}
+
 	const serverExecutable: Executable = {
 		command: String(command_path),
 		args,
-		transport : {
-			kind: TransportKind.socket,
-			port: tcp_port
-		}
+		transport
 	};
 	
 	// If the extension is launched in debug mode then the debug server options are used
@@ -57,12 +65,14 @@ function start_lsp() {
 	const serverOptions: ServerOptions = {
 		run: serverExecutable,
 		debug : serverExecutable
-		//run: { module: serverModule, transport: TransportKind.ipc },
-		//debug: {
-		//	module: serverModule,
-		//	transport: TransportKind.ipc,
-		//}
 	};
+
+	if(!outputChannel) {
+		outputChannel = vscode.window.createOutputChannel("SUS Language Server");
+	}
+	if(trace_mode != "off" && !traceOutputChannel) {
+		traceOutputChannel = vscode.window.createOutputChannel("SUS LSP Trace");
+	}
 
 	// Options to control the language client
 	const clientOptions: LanguageClientOptions = {
@@ -72,17 +82,17 @@ function start_lsp() {
 			// Notify the server about file changes to '.sus files contained in the workspace
 			fileEvents: vscode.workspace.createFileSystemWatcher('**/*.sus')
 		},
-		outputChannel: vscode.window.createOutputChannel("SUS Log Channel"),
-		outputChannelName: "SUSOutputChannel",
-		traceOutputChannel: vscode.window.createOutputChannel("SUS LSP Trace"),
+		outputChannel,
+		traceOutputChannel,
+		revealOutputChannelOn: RevealOutputChannelOn.Error,
 		connectionOptions: {
 			maxRestartCount: 0
-		}
+		},
 	};
 
 	// Create the language client and start the client.
 	client = new LanguageClient(
-		'susLanguageServer',
+		'sus_lsp',
 		'SUS Language Server',
 		serverOptions,
 		clientOptions
