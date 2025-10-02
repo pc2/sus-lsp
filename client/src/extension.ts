@@ -1,4 +1,3 @@
-
 import vscode = require('vscode');
 import child_process = require('child_process');
 
@@ -31,20 +30,41 @@ function start_lsp() {
 
 	console.log("Command path is: ", command_path);
 
-	child_process.exec(command_path + " --version", (error, stdout, stderr) => {
-        if (error) {
-            // If the executable is not found, show a notification to the user
-			if(command_path == "sus_compiler") {
-				vscode.window.showErrorMessage(error + 'sus_compiler is not installed. Please install it using "cargo install sus_compiler", or if you have it installed, but not in your PATH, then set "sus_lsp.executable_path" to the path of the executable. Eg: in .vscode/settings.json: "sus_lsp.executable_path" : "/home/lennart/Desktop/sus-compiler/target/release/sus_compiler"');
-			} else {
-				vscode.window.showErrorMessage(error + 'No sus_compiler executable found at "' + command_path + '" Please install it using "cargo install sus_compiler", or if you have it installed, but not in your PATH, then set "sus_lsp.executable_path" to the path of the executable. Eg: in .vscode/settings.json: "sus_lsp.executable_path" : "/home/lennart/Desktop/sus-compiler/target/release/sus_compiler"');
+	// Check sus_compiler version synchronously and ensure it meets minimum requirements
+	try {
+		const versionOutput = child_process.execSync(command_path + " --version", { encoding: "utf8" }).trim();
+		// Example output: SUS Compiler 0.3.2-devel (bd8e2dab3bd2c33c95620022e25bf4bc327ddc13) built at 2025-10-02T15:12:02+02:00
+		const versionMatch = versionOutput.match(/SUS Compiler ([0-9]+)\.([0-9]+)\.([0-9]+)(?:-[^ ]*)?/);
+		if (versionMatch) {
+			const minVersion = [0, 3, 2]; // Minimum required version: 0.3.2, because this added --stdio
+			const currentVersion = [
+				parseInt(versionMatch[1], 10),
+				parseInt(versionMatch[2], 10),
+				parseInt(versionMatch[3], 10)
+			];
+			let meetsRequirement = true;
+			for (let i = 0; i < minVersion.length; i++) {
+				if (currentVersion[i] < minVersion[i]) {
+					meetsRequirement = false;
+					break;
+				}
 			}
-            return;
-        }
-
-        // If the executable is found, you can log the version or do something else
-        vscode.window.showInformationMessage(`sus_compiler --version: ${stdout}`);
-    });
+			if (!meetsRequirement) {
+				vscode.window.showErrorMessage(`sus_compiler version too old: ${command_path} --version: ${versionOutput}\nMinimum required version is ${minVersion.join('.')}. Update it using "cargo install sus_compiler"`);
+				return;
+			}
+		} else {
+			vscode.window.showWarningMessage(`Could not parse sus_compiler version from output: ${versionOutput}`);
+		}
+		vscode.window.showInformationMessage(`sus_compiler --version: ${versionOutput}`);
+	} catch (error) {
+		if(command_path == "sus_compiler") {
+			vscode.window.showErrorMessage('sus_compiler not found. Install it using "cargo install sus_compiler"\n' + error);
+		} else {
+			vscode.window.showErrorMessage('' + error);
+		}
+		return;
+	}
 
 	let transport;
 	if(tcp_port) {
