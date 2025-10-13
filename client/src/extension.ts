@@ -24,7 +24,10 @@ function start_lsp() {
 	if(!command_path) {
 		command_path = "sus_compiler";
 	}
-	const args : string[] = config.get("args");
+	const configArgs = config.get("args");
+	const args: string[] = ["--lsp", ...((Array.isArray(configArgs) ? configArgs : []))];
+	const env : object = config.get("env");
+	const cwd : string = config.get("cwd");
 	const tcp_port : number = config.get("tcp_port", undefined);
 	const trace_mode : string = config.get("trace.server");
 
@@ -36,7 +39,7 @@ function start_lsp() {
 		// Example output: SUS Compiler 0.3.2-devel (bd8e2dab3bd2c33c95620022e25bf4bc327ddc13) built at 2025-10-02T15:12:02+02:00
 		const versionMatch = versionOutput.match(/SUS Compiler ([0-9]+)\.([0-9]+)\.([0-9]+)(?:-[^ ]*)?/);
 		if (versionMatch) {
-			const minVersion = [0, 3, 2]; // Minimum required version: 0.3.2, because this added --stdio
+			const minVersion = [0, 3, 3]; // Minimum required version: 0.3.3, because this added "without LSP Support" as optional version string
 			const currentVersion = [
 				parseInt(versionMatch[1], 10),
 				parseInt(versionMatch[2], 10),
@@ -51,6 +54,10 @@ function start_lsp() {
 			}
 			if (!meetsRequirement) {
 				vscode.window.showErrorMessage(`sus_compiler version too old: ${command_path} --version: ${versionOutput}\nMinimum required version is ${minVersion.join('.')}. Update it using "cargo install sus_compiler"`);
+				return;
+			}
+			if (versionOutput.includes("without LSP Support")) {
+				vscode.window.showErrorMessage(`sus_compiler was not compiled with LSP support: ${command_path} --version: ${versionOutput}\nBuild it with "cargo build --features lsp"`);
 				return;
 			}
 		} else {
@@ -78,6 +85,10 @@ function start_lsp() {
 
 	const serverExecutable: Executable = {
 		command: String(command_path),
+		options: {
+			env,
+			cwd,
+		},
 		args,
 		transport
 	};

@@ -5,7 +5,7 @@
 	"icon": "susLogo512.png",
 	"author": "Lennart Van Hirtum <lennart.vanhirtum@gmail.com>",
 	"license": "MIT",
-	"version": "0.3.2",
+	"version": "0.3.3",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pc2/sus-lsp"
@@ -49,8 +49,18 @@
 				"sus_lsp.args": {
 					"scope": "window",
 					"type": "array",
-					"default": ["--lsp"],
+					"default": [],
 					"description": "Extra flags to pass after 'sus-compiler'"
+				},
+				"sus_lsp.env": {
+					"scope": "window",
+					"type": "object",
+					"description": "Environment variables to add for 'sus_compiler'. Like 'SUS_STL_HOME'"
+				},
+				"sus_lsp.cwd": {
+					"scope": "window",
+					"type": "string",
+					"description": "cwd to run 'sus_compiler' in."
 				},
 				"sus_lsp.tcp_port": {
 					"scope": "window",

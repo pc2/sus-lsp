@@ -20,7 +20,7 @@
 			"name": "storage.modifier"
 		},
 		{
-			"match": "\\b\\d[\\d_]*(?:\\.*[\\d_]*)\\b",
+			"match": "\\b(\\d[\\d_]*(?:\\.*[\\d_]*)|\\d*'[\\d\\w\\W_]+)\\b",
 			"name": "constant.numeric"
 		},
 		{
