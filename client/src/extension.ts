@@ -8,8 +8,7 @@ import {
 	TransportKind,
 	Executable,
 	RevealOutputChannelOn,
-	State,
-	CancellationStrategy
+	State
 } from 'vscode-languageclient/node';
 import { OutputChannel } from 'vscode';
 
@@ -45,16 +44,10 @@ function start_lsp() {
 				parseInt(versionMatch[2], 10),
 				parseInt(versionMatch[3], 10)
 			];
-			let meetsRequirement = true;
-			for (let i = 0; i < minVersion.length; i++) {
-				if (currentVersion[i] < minVersion[i]) {
-					meetsRequirement = false;
-					break;
-				}
-			}
-			if (!meetsRequirement) {
-				vscode.window.showErrorMessage(`sus_compiler version too old: ${command_path} --version: ${versionOutput}\nMinimum required version is ${minVersion.join('.')}. Update it using "cargo install sus_compiler"`);
-				return;
+			if(currentVersion[0] < minVersion[0]
+				|| currentVersion[0] == minVersion[0] && currentVersion[1] < minVersion[1]
+				|| currentVersion[0] == minVersion[0] && currentVersion[1] == minVersion[1] && currentVersion[2] < minVersion[2]) {
+				vscode.window.showWarningMessage(`sus_compiler version too old\nMinimum required version is ${minVersion.join('.')}. Update it using "cargo install sus_compiler"`);
 			}
 			if (versionOutput.includes("without LSP Support")) {
 				vscode.window.showErrorMessage(`sus_compiler was not compiled with LSP support: ${command_path} --version: ${versionOutput}\nBuild it with "cargo build --features lsp"`);
@@ -63,7 +56,7 @@ function start_lsp() {
 		} else {
 			vscode.window.showWarningMessage(`Could not parse sus_compiler version from output: ${versionOutput}`);
 		}
-		vscode.window.showInformationMessage(`sus_compiler --version: ${versionOutput}`);
+		vscode.window.showInformationMessage(`${command_path} --version: ${versionOutput}`);
 	} catch (error) {
 		if(command_path == "sus_compiler") {
 			vscode.window.showErrorMessage('sus_compiler not found. Install it using "cargo install sus_compiler"\n' + error);
