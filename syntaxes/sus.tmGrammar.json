@@ -4,26 +4,36 @@
 	"foldingStopMarker" : "\\}",
 	"patterns": [
 		{
-			"match": "\\b(int|bool)\\b",
-			"name": "support.type"
+			"name": "support.type",
+			"match": "\\b(int|bool|float|double|string)\\b"
 		},
 		{
-			"match": "\\b(gen|if|when|else|while|for|in|input|output)\\b",
-			"name": "keyword.control.untitled"
+			"name": "keyword.control.untitled",
+			"match": "\\b(gen|if|when|else|while|for|in|input|output)\\b"
 		},
 		{
-			"match": "\\b(module|struct|type|const|interface|action|query|trigger|domain|extern|__builtin__)\\b",
-			"name": "keyword.control.untitled"
+			"name": "keyword.control.untitled",
+			"match": "\\b(module|struct|type|const|interface|action|query|trigger|domain|extern|__builtin__)\\b"
 		},
 		{
-			"match": "\\b(reg|state|initial|assume)\\b",
-			"name": "storage.modifier"
+			"name": "storage.modifier",
+			"match": "\\b(reg|state|initial|assume)\\b"
 		},
 		{
-			"match": "\\b(\\d[\\d_]*(?:\\.*[\\d_]*)|\\d*'[\\d\\w\\W_]+)\\b",
-			"name": "constant.numeric"
+			"name": "constant.numeric",
+			"match": "\\b(\\d[\\d_]*\\.?[\\d_]*(e[+-]?\\d+)?d?|\\d*'\\w+)\\b"
 		},
 		{
+			"name": "string.quoted.double.untitled",
+            "begin": "\"",
+            "end": "\"",
+            "patterns": [{
+				"name": "constant.character.escape.untitled",
+				"match": "\\\\."
+        	}]
+        },
+		{
+			"name": "expression.group",
 			"begin": "\\(",
 			"end": "\\)",
 			"beginCaptures": {
@@ -32,10 +42,10 @@
 			"endCaptures": {
 				"0": { "name": "punctuation.paren.close" }
 			},
-			"name": "expression.group",
 			"patterns": [{ "include": "$self" }]
 		},
 		{
+			"name": "expression.group",
 			"begin": "\\[",
 			"end": "\\]",
 			"beginCaptures": {
@@ -44,10 +54,10 @@
 			"endCaptures": {
 				"0": { "name": "punctuation.bracket.close" }
 			},
-			"name": "expression.group",
 			"patterns": [{ "include": "$self" }]
 		},
 		{
+			"name": "expression.group",
 			"begin": "\\{",
 			"end": "\\}",
 			"beginCaptures": {
@@ -56,17 +66,16 @@
 			"endCaptures": {
 				"0": { "name": "punctuation.brace.close" }
 			},
-			"name": "expression.group",
 			"patterns": [{ "include": "$self" }]
 		},
 		{
-			"match": "//[^\\n]*\\n",
-			"name": "comment.line.double-slash"
+			"name": "comment.line.double-slash",
+			"match": "//[^\\n]*\\n"
 		},
 		{
+			"name": "comment.block",
 			"begin" : "\\/\\*",
-			"end" : "\\*\\/",
-			"name": "comment.block"
+			"end" : "\\*\\/"
 		}
 	]
 }
