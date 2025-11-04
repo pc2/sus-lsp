@@ -13,7 +13,7 @@
 		},
 		{
 			"name": "keyword.control.untitled",
-			"match": "\\b(module|struct|type|const|interface|action|query|trigger|domain|extern|__builtin__)\\b"
+			"match": "\\b(mod|module|struct|type|const|interface|action|query|trigger|domain|extern|__builtin__)\\b"
 		},
 		{
 			"name": "storage.modifier",
