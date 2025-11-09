@@ -8,7 +8,8 @@ import {
 	TransportKind,
 	Executable,
 	RevealOutputChannelOn,
-	State
+	State,
+	ExecutableOptions
 } from 'vscode-languageclient/node';
 import { OutputChannel } from 'vscode';
 
@@ -25,12 +26,19 @@ function start_lsp() {
 	}
 	const configArgs = config.get("args");
 	const args: string[] = ["--lsp", ...((Array.isArray(configArgs) ? configArgs : []))];
-	const env : object = config.get("env");
-	const cwd : string = config.get("cwd");
+	// env should be NodeJS.ProcessEnv. If not set in config, use the current process.env.
+	// If config provides an object, merge it on top of process.env so config overrides defaults.
+	const configEnv = config.get<Record<string, string> | undefined>("env");
+	const env: NodeJS.ProcessEnv = configEnv ? { ...process.env, ...configEnv } : { ...process.env };
+	const cwd : string | undefined = config.get("cwd");
 	const tcp_port : number = config.get("tcp_port", undefined);
 	const trace_mode : string = config.get("trace.server");
 
-	console.log("Command path is: ", command_path);
+	if(!outputChannel) {
+		outputChannel = vscode.window.createOutputChannel("SUS Language Server");
+	}
+
+	outputChannel.appendLine(`Command path is: ${command_path}`);
 
 	// Check sus_compiler version synchronously and ensure it meets minimum requirements
 	try {
@@ -76,12 +84,13 @@ function start_lsp() {
 		transport = TransportKind.stdio;
 	}
 
+	const options : ExecutableOptions = {
+		cwd,
+		env,
+	};
 	const serverExecutable: Executable = {
-		command: String(command_path),
-		options: {
-			env,
-			cwd,
-		},
+		command: command_path,
+		options,
 		args,
 		transport
 	};
@@ -93,9 +102,6 @@ function start_lsp() {
 		debug : serverExecutable
 	};
 
-	if(!outputChannel) {
-		outputChannel = vscode.window.createOutputChannel("SUS Language Server");
-	}
 	if(trace_mode != "off" && !traceOutputChannel) {
 		traceOutputChannel = vscode.window.createOutputChannel("SUS LSP Trace");
 	}

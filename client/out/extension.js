@@ -16,7 +16,10 @@ function start_lsp() {
     }
     const configArgs = config.get("args");
     const args = ["--lsp", ...((Array.isArray(configArgs) ? configArgs : []))];
-    const env = config.get("env");
+    // env should be NodeJS.ProcessEnv. If not set in config, use the current process.env.
+    // If config provides an object, merge it on top of process.env so config overrides defaults.
+    const configEnv = config.get("env");
+    const env = configEnv ? { ...process.env, ...configEnv } : { ...process.env };
     const cwd = config.get("cwd");
     const tcp_port = config.get("tcp_port", undefined);
     const trace_mode = config.get("trace.server");
@@ -67,12 +70,13 @@ function start_lsp() {
     else {
         transport = node_1.TransportKind.stdio;
     }
+    const options = {
+        cwd,
+        env,
+    };
     const serverExecutable = {
-        command: String(command_path),
-        options: {
-            env,
-            cwd,
-        },
+        command: command_path,
+        options,
         args,
         transport
     };
