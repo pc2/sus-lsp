@@ -23,7 +23,10 @@ function start_lsp() {
     const cwd = config.get("cwd");
     const tcp_port = config.get("tcp_port", undefined);
     const trace_mode = config.get("trace.server");
-    console.log("Command path is: ", command_path);
+    if (!outputChannel) {
+        outputChannel = vscode.window.createOutputChannel("SUS Language Server");
+    }
+    outputChannel.appendLine(`Command path is: ${command_path}`);
     // Check sus_compiler version synchronously and ensure it meets minimum requirements
     try {
         const versionOutput = child_process.execSync(command_path + " --version", { encoding: "utf8" }).trim();
@@ -86,9 +89,6 @@ function start_lsp() {
         run: serverExecutable,
         debug: serverExecutable
     };
-    if (!outputChannel) {
-        outputChannel = vscode.window.createOutputChannel("SUS Language Server");
-    }
     if (trace_mode != "off" && !traceOutputChannel) {
         traceOutputChannel = vscode.window.createOutputChannel("SUS LSP Trace");
     }

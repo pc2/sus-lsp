@@ -17,7 +17,7 @@
 		},
 		{
 			"name": "storage.modifier",
-			"match": "\\b(reg|state|initial|assume)\\b"
+			"match": "\\b(reg|state|initial|assume|split)\\b"
 		},
 		{
 			"name": "constant.numeric",
