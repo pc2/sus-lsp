@@ -9,15 +9,11 @@
 		},
 		{
 			"name": "keyword.control.untitled",
-			"match": "\\b(gen|if|when|else|while|for|in|input|output)\\b"
-		},
-		{
-			"name": "keyword.control.untitled",
-			"match": "\\b(mod|module|struct|type|const|interface|action|query|trigger|domain|extern|__builtin__)\\b"
+			"match": "\\b(module|struct|const|interface|input|output|action|query|trigger|domain|extern|__builtin__)\\b"
 		},
 		{
 			"name": "storage.modifier",
-			"match": "\\b(reg|state|initial|assume|split)\\b"
+			"match": "\\b(gen|if|when|else|while|for|in|reg|state|initial|assume|split|mod|type)\\b"
 		},
 		{
 			"name": "constant.numeric",
