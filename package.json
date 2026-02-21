@@ -5,7 +5,7 @@
 	"icon": "susLogo512.png",
 	"author": "Lennart Van Hirtum <lennart.vanhirtum@gmail.com>",
 	"license": "MIT",
-	"version": "0.3.8",
+	"version": "0.3.9-dev",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pc2/sus-lsp"

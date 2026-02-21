@@ -42,7 +42,7 @@ function start_lsp() {
 
 	// Check sus_compiler version synchronously and ensure it meets minimum requirements
 	try {
-		const versionOutput = child_process.execSync(command_path + " --version", { encoding: "utf8" }).trim();
+		const versionOutput = child_process.execFileSync(command_path, ["--version"], { encoding: "utf8" }).trim();
 		// Example output: SUS Compiler 0.3.2-devel (bd8e2dab3bd2c33c95620022e25bf4bc327ddc13) built at 2025-10-02T15:12:02+02:00
 		const versionMatch = versionOutput.match(/SUS Compiler ([0-9]+)\.([0-9]+)\.([0-9]+)(?:-[^ ]*)?/);
 		if (versionMatch) {
@@ -65,14 +65,51 @@ function start_lsp() {
 			vscode.window.showWarningMessage(`Could not parse sus_compiler version from output: ${versionOutput}`);
 		}
 		vscode.window.showInformationMessage(`${command_path} --version: ${versionOutput}`);
-	} catch (error) {
-		if(command_path == "sus_compiler") {
-			vscode.window.showErrorMessage('sus_compiler not found. Install it using "cargo install sus_compiler"\n' + error);
+	}catch (error: any) {
+	const pathEnv = process.env.PATH ?? "(PATH not set)";
+
+	// Executable not found (cross-platform)
+	if (error?.code === "ENOENT") {
+		if (command_path === "sus_compiler") {
+			vscode.window.showErrorMessage(
+				`sus_compiler not found in PATH.\n\n` +
+				`Install it using:\n` +
+				`  cargo install sus_compiler\n\n` +
+				`Current PATH:\n${pathEnv}`
+			);
 		} else {
-			vscode.window.showErrorMessage('' + error);
+			vscode.window.showErrorMessage(
+				`Executable not found: ${command_path}\n\n` +
+				`Current PATH:\n${pathEnv}`
+			);
 		}
 		return;
 	}
+
+	// Permission problem
+	if (error?.code === "EACCES") {
+		vscode.window.showErrorMessage(
+			`Permission denied when executing: ${command_path}\n` +
+			`Check executable permissions.`
+		);
+		return;
+	}
+
+	// Process ran but exited non-zero
+	if (typeof error?.status === "number") {
+		vscode.window.showErrorMessage(
+			`${command_path} exited with code ${error.status}\n\n` +
+			`${error.stderr?.toString() ?? ""}`
+		);
+		return;
+	}
+
+	// Fallback
+	vscode.window.showErrorMessage(
+		`Failed to execute ${command_path}:\n${error}`
+	);
+	return;
+}
 
 	let transport;
 	if(tcp_port) {
