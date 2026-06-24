@@ -31,7 +31,7 @@ function start_lsp() {
 	const configEnv = config.get<Record<string, string> | undefined>("env");
 	const env: NodeJS.ProcessEnv = configEnv ? { ...process.env, ...configEnv } : { ...process.env };
 	const cwd : string | undefined = config.get("cwd");
-	const tcp_port : number = config.get("tcp_port", undefined);
+	const tcp_port : number | undefined = config.get("tcp_port", undefined);
 	const trace_mode : string = config.get("trace.server");
 
 	if(!outputChannel) {
