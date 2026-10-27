@@ -13,7 +13,7 @@
 		},
 		{
 			"name": "storage.modifier",
-			"match": "\\b(gen|if|when|else|while|for|in|reg|state|initial|assume|split|mod|type)\\b"
+			"match": "\\b(gen|if|when|else|while|for|in|reg|next|state|initial|assume|split|mod|type)\\b"
 		},
 		{
 			"name": "constant.numeric",
