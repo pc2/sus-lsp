@@ -1,0 +1,38 @@
+name: Release
+
+# Pushing a tag `vX.Y.Z` publishes the extension to the VS Code Marketplace and creates a GitHub release with the .vsix attached.
+on:
+  push:
+    tags: [ "v[0-9]+.[0-9]+.[0-9]+" ]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write # VS Code Marketplace trusted publishing
+      contents: write # create the GitHub release
+    steps:
+    - uses: actions/checkout@v4
+    - name: Check that the tag matches the version in package.json
+      run: |
+        VERSION="${GITHUB_REF_NAME#v}"
+        PACKAGE_VERSION="$(jq -r .version package.json)"
+        if [ "$VERSION" != "$PACKAGE_VERSION" ]; then
+          echo "::error::Tag $GITHUB_REF_NAME does not match the version in package.json ($PACKAGE_VERSION)"
+          exit 1
+        fi
+        echo "VSIX=sus-lsp-$VERSION.vsix" >> "$GITHUB_ENV"
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+    - run: npm ci
+    - run: npm run lint
+    - name: Package
+      run: npx --yes @vscode/vsce@4.1.1 package --out "$VSIX"
+    - name: Publish to the VS Code Marketplace
+      run: npx --yes @vscode/vsce@4.1.1 publish --oidc --packagePath "$VSIX"
+    - name: Create GitHub release
+      run: gh release create "$GITHUB_REF_NAME" "$VSIX" --verify-tag --title "$GITHUB_REF_NAME" --generate-notes
+      env:
+        GH_TOKEN: ${{ github.token }}
